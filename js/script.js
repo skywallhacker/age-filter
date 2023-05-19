@@ -4,15 +4,14 @@ let box_right = document.querySelector('.box_right')
 let form = document.querySelector('form')
 let inputName = document.querySelector('.names')
 let inputAge = document.querySelector('.ages')
+let data
 
-let users = [
-    { name: 'John', age: 21, },
-    { name: 'Lenny', age: 18, },
-    { name: 'Andrew', age: 43, },
-    { name: 'Peter', age: 81, },
-    { name: 'Anna', age: 47, },
-    { name: 'Albert', age: 76, },
-]
+fetch('https://dummyjson.com/users')
+    .then(res => res.json())
+    .then(use => {
+        data = use.users
+        filter()
+    })
 
 
 function reload(arr, cont) {
@@ -29,7 +28,7 @@ function reload(arr, cont) {
         names.classList.add('names')
         ages.classList.add('ages')
 
-        h1.innerHTML = item.name
+        h1.innerHTML = item.firstName
         span.innerHTML = 'Age'
         h6.innerHTML = item.age
 
@@ -40,44 +39,55 @@ function reload(arr, cont) {
     }
 }
 
-let left = users.filter((user) => {
-    return user.age < 25;
-});
-reload(left, box_left)
-let midle = users.filter((user) => {
-    return user.age < 50 && user.age > 25;
-});
-reload(midle, box_midle)
-let right = users.filter((user) => {
-    return user.age > 50;
-});
-reload(right, box_right)
 
-console.log(users);
-
-form.onsubmit = (event) => {
-    event.preventDefault();
-    let list = {
-        name: inputName.value,
-        age: inputAge.value
-    }
-
-    if (inputName.value.length !== 0 && inputAge.value.length !== 0) {
-        users.push(list)
-    }
-    console.log(users);
-    let left = users.filter((user) => {
+function filter() {
+    let left = data.filter((user) => {
         return user.age < 25;
     });
     reload(left, box_left)
-    let midle = users.filter((user) => {
+    let midle = data.filter((user) => {
         return user.age < 50 && user.age > 25;
     });
     reload(midle, box_midle)
-    let right = users.filter((user) => {
+    let right = data.filter((user) => {
         return user.age > 50;
     });
     reload(right, box_right)
+
+
 }
+
+
+form.onsubmit = (event) => {
+    event.preventDefault();
+    
+
+    if (inputName.value.length !== 0 && inputAge.value.length !== 0) {
+        fetch('https://dummyjson.com/users/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(
+            {
+                firstName: inputName.value,
+                age: inputAge.value
+            }
+        )
+    })
+        .then(res => res.json())
+        .then(edit => {
+            console.log(edit);
+            data.push(edit)
+            console.log(data);
+            filter()
+            
+        })
+
+    }
+
+
+}
+
 
 

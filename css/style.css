@@ -88,7 +88,7 @@ form button {
   justify-content: flex-start;
   flex-direction: column;
   border-right: 3px solid lightgray;
-  min-height: 600px;
+  min-height: 650px;
   width: 400px;
   padding-top: 20px;
 }
